@@ -82,7 +82,7 @@ Services    number of configured services
 
 In multiple modes:
 
-NAME        name of the proxy and his services
+NAME        name of the proxy and its services
 W           configured weight of the service
 STATUS      service status (UP/DOWN/NOLB/MAINT/MAINT(via)...)
 CHECK       status of last health check (see status reference below)
