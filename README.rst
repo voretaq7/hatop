@@ -37,17 +37,14 @@ process id is displayed top right.*
 Installation
 ============
 
-See ``INSTALL`` or refer to :ref:`install`
+See ``INSTALL``
 
 
 Command line options
 ====================
 
-Invoking hatop without options or with ``-h / --help`` results in:
-
 ::
 
-  $ hatop --help
   Usage: hatop (-s SOCKET| -t HOST:PORT) [OPTIONS]...
 
   Options:
@@ -76,10 +73,36 @@ Invoking hatop without options or with ``-h / --help`` results in:
                           proxy filter in format "<pxname>"
 
 
+Configuration File
+====================
+A configuration file at ``~/.hatop`` will be read at startup.
+This file may be used to set default values for any of the
+hatop command-line options.
+
+Example configuration file:
+
+  [hatop]
+  socket=/var/run/haproxy.sock
+  interval=3
+  mode=1
+  readonly=false
+  
+  [stat_filters]
+  filter_one=2 1 0
+  filter_two=3 1 0
+  
+  [proxy_filters]
+  filter_one=app
+  filter_two=dbi
+  
+Note that stat filters and proxy filters are defined in their own sections.
+The names in these sections do not matter: All filters will be loaded.
+The examples above are equivalent to specifying `-f "2 1 0" -f "3 1 0"`
+and `-p app -p dbi` respectively.
+  
+
 Display mode reference
 ======================
-
-See also: :ref:`screenshots`
 
 ::
 
@@ -159,8 +182,6 @@ A brief keybind reference is logged there directly after startup...
 
 Header reference
 ================
-
-See also: :ref:`screenshots`
 
 ::
 
