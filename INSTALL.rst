@@ -18,7 +18,7 @@ Requirements
 
 **HATop is written in pure Python and has no external dependencies!**
 
-* `Python 2.4 <http://python.org/>`_ or later (no Python 3 support planned yet)
+* `Python 3.1 <http://python.org/>`_ or later (Python 2 no longer supported)
 * `HAProxy 1.4 <http://haproxy.1wt.eu/>`_ or later
 
 

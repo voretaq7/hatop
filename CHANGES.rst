@@ -4,8 +4,26 @@ Changelog
 
 This is a brief overview of the changes introduced by each version.
 
-For the full changelog refer to the
-`Git version history <http://labs.feurix.org/admin/hatop/log/>`_.
+For the full changelog refer to the git history available at
+https://github.com/voretaq7/hatop/commits/
+
+HATop 0.8
+=========
+
+This is a Python 3 release of HATop. This series does not attempt to
+maintain backward compatibility with Python 2.x systems.
+
+It includes new features such as the ability to use HAProxy TCP sockets
+and support for a ~/.hatop configuration file.
+
+HATop 0.8.0
+-----------
+
+:Date: TODO
+
+- The first public release of the 0.8.x series
+
+
 
 
 HATop 0.7
