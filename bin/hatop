@@ -168,6 +168,8 @@ import tty
 import curses
 import curses.ascii
 
+import configparser
+
 from socket import error as SocketError
 from _curses import error as CursesError
 
@@ -357,6 +359,36 @@ except TypeError:
         def extendleft(self, iterable):
             for item in iterable:
                 self.appendleft(item)
+
+class Config:
+    def __init__(self):
+        _cfgpath=os.path.expanduser('~/.hatop')
+        _cfg=configparser.ConfigParser()
+        _cfg.read(_cfgpath)
+
+        if 'hatop' in _cfg:
+            self.socket = _cfg['hatop'].get('socket', None)
+            self.tcp_socket = _cfg['hatop'].get('tcp_socket', None)
+            self.interval = int(_cfg['hatop'].get('interval', '3'))
+            self.mode = int(_cfg['hatop'].get('mode', '1'))
+            self.readonly = _cfg['hatop'].getboolean('readonly', False)
+        else:
+            self.socket = None
+            self.tcp_socket = None
+            self.interval = 3
+            self.mode = 1
+            self.readonly = False
+
+        self.stat_filter = []
+        self.proxy_filter = []
+
+        if 'stat_filters' in _cfg:
+            for filter in _cfg['stat_filters']:
+                self.stat_filter.append(_cfg['stat_filters'][filter])
+
+        if 'proxy_filters' in _cfg:
+            for filter in _cfg['proxy_filters']:
+                self.proxy_filter.append(_cfg['proxy_filters'][filter])
 
 
 class Socket:
@@ -2109,31 +2141,39 @@ if __name__ == '__main__':
     version  = 'hatop version %s' % __version__
     usage    = 'Usage: hatop (-s SOCKET| -t HOST:PORT) [OPTIONS]...'
 
+    config = Config()
+
     parser = OptionParser(usage=usage, version=version)
 
     opts = OptionGroup(parser, 'Mandatory')
     opts.add_option('-s', '--unix-socket', dest='socket',
-            help='path to the haproxy unix stats socket')
+            help='path to the haproxy unix stats socket',
+            default=config.socket)
     opts.add_option('-t', '--tcp-socket', dest='tcp_socket',
-            help='address of the haproxy tcp stats socket')
+            help='address of the haproxy tcp stats socket',
+            default=config.tcp_socket)
     parser.add_option_group(opts)
 
     opts = OptionGroup(parser, 'Optional')
     opts.add_option('-i', '--update-interval', type='int', dest='interval',
-            help='update interval in seconds (1-30, default: 3)', default=3)
+            help='update interval in seconds' \
+                 f' (1-30, default: {config.interval})',
+            default=config.interval)
     opts.add_option('-m', '--mode', type='int', dest='mode',
-            help='start in specific mode (1-5, default: 1)', default=1)
+            help=f'start in specific mode (1-5, default: {config.mode})',
+            default=config.mode)
     opts.add_option('-n', '--read-only', action='store_true', dest='ro',
-            help='disable the cli and query for stats only')
+            help='disable the cli and query for stats only',
+            default=config.readonly)
     parser.add_option_group(opts)
 
     opts = OptionGroup(parser, 'Filters',
             'Note: All filter options may be given multiple times.')
     opts.add_option('-f', '--filter', action='append', dest='stat_filter',
-            default=[], metavar='FILTER',
+            default=config.stat_filter, metavar='FILTER',
             help='stat filter in format "<iid> <type> <sid>"')
     opts.add_option('-p', '--proxy', action='append', dest='proxy_filter',
-            default=[], metavar='PROXY',
+            default=config.proxy_filter, metavar='PROXY',
             help='proxy filter in format "<pxname>"')
     parser.add_option_group(opts)
 
